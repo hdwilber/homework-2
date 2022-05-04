@@ -1,72 +1,96 @@
 package com.shapesmanager;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleFloatProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
-import javafx.geometry.Pos;
+import javafx.beans.property.StringProperty;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.TilePane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.Priority;
 
 public abstract class Shape {
-	SimpleFloatProperty x;
-	SimpleFloatProperty y;
-	Color stroke;
-	Color fill;
-	SimpleBooleanProperty visible;
-	SimpleStringProperty id;
+	StringProperty id;
+	DoubleProperty x;
+	DoubleProperty y;
+	BooleanProperty visible;
 
+	static List<ShapeDetailsProperty<?>> detailsProperties;
+	static {
+		detailsProperties = new ArrayList<ShapeDetailsProperty<?>>();
+		detailsProperties.add(new ShapeDetailsProperty<Shape>("Id", InputType.TEXT, "id", Shape.class));
+		detailsProperties.add(new ShapeDetailsProperty<Shape>("X", InputType.NUMBER, "x", Shape.class));
+		detailsProperties.add(new ShapeDetailsProperty<Shape>("Y", InputType.NUMBER, "y", Shape.class));
+	}
+	
 	public Shape(String i) {
-		id = new SimpleStringProperty(i);
-		visible = new SimpleBooleanProperty(true);
-		x = new SimpleFloatProperty(100);
-		y = new SimpleFloatProperty(100);
+		this(i, 0, 0);
+		setRandomPosition();
 	}
-	public Shape(String i, float x, float y ) {
-		id = new SimpleStringProperty(i);
-		visible = new SimpleBooleanProperty(true);
-		this.x = new SimpleFloatProperty(x);
-		this.y = new SimpleFloatProperty(y);
+	
+	public void setRandomPosition() {
+		x.set(Math.random() * 1000);
+		y.set(Math.random() * 1000);
 	}
 
-	public ObservableValue<Boolean> getVisibleProp() {
+	public Shape(String i, double x, double y ) {
+		id = new SimpleStringProperty(i);
+		visible = new SimpleBooleanProperty(true);
+		this.x = new SimpleDoubleProperty(x);
+		this.y = new SimpleDoubleProperty(y);
+	}
+
+	public StringProperty idProperty() {
+		return id;
+	}
+
+	public BooleanProperty visibleProperty() {
 		return visible;
 	}
-	public ObservableValue<Number> getXProp() {
+
+	public DoubleProperty xProperty() {
 		return x;
 	}
-	public ObservableValue<Number> getYProp() {
+
+	public DoubleProperty yProperty() {
 		return y;
 	}
 	
-	public void updateDetailsForm(Pane pane) {
-		Node[] idNodes = ShapeDetailsInput.getLabelInput("ID", ShapeDetailsInput.InputTypes.TEXT, id);
-		Node[] xNodes = ShapeDetailsInput.getLabelInput("X", ShapeDetailsInput.InputTypes.NUMBER, x);
-		Node[] yNodes = ShapeDetailsInput.getLabelInput("Y", ShapeDetailsInput.InputTypes.NUMBER, y);
-		
-		TilePane idTile = new TilePane();
-		TilePane xTile = new TilePane();
-		TilePane yTile = new TilePane();
+	public abstract Pane getDetailsForm();
 
-		TilePane.setAlignment(idNodes[0], Pos.CENTER_LEFT);
-		idTile.getChildren().addAll(idNodes[0], idNodes[1]);
-		TilePane.setAlignment(xNodes[0], Pos.CENTER_LEFT);
-		xTile.getChildren().addAll(xNodes[0], xNodes[1]);
-		TilePane.setAlignment(yNodes[0], Pos.CENTER_LEFT);
-		yTile.getChildren().addAll(yNodes[0], yNodes[1]);
-
-		pane.getChildren().add(idTile);
-		pane.getChildren().add(xTile);
-		pane.getChildren().add(yTile);
-	}
-	
 	public abstract javafx.scene.shape.Shape getShape();
+
+	public Pane getDetailsForm(List<ShapeDetailsProperty<?>> inputs) {
+		GridPane grid = new GridPane();
+		grid.setPadding(new Insets(8, 8, 8, 8));
+		grid.setHgap(16);
+		grid.setVgap(16);
+		ColumnConstraints constraints = new ColumnConstraints();
+		constraints.setHgrow(Priority.SOMETIMES);
+		grid.getColumnConstraints().addAll(new ColumnConstraints(), constraints);
+		int rows = 0;
+		Iterator<ShapeDetailsProperty<?>> it = inputs.iterator();
+		while(it.hasNext()) {
+			List<Node> nodes = it.next().getLabelInputFor(this);
+			if (!nodes.isEmpty()) {
+				grid.add(nodes.get(0), 0, rows);
+				grid.add(nodes.get(1), 1, rows);
+				rows++;
+			}
+		}
+		return grid;
+	}
+
+	public String toString() {
+		return this.id.get();
+	}
+
 }

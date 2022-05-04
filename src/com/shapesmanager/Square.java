@@ -1,24 +1,29 @@
 package com.shapesmanager;
 
-import javafx.beans.property.SimpleFloatProperty;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
+import java.util.ArrayList;
+import java.util.List;
+
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.TilePane;
 
 public class Square extends Shape {
-	SimpleFloatProperty width;
+	DoubleProperty width;
+
+	public static List<ShapeDetailsProperty<?>> detailsProperties;
+	static {
+		detailsProperties = new ArrayList<ShapeDetailsProperty<?>>();
+		detailsProperties.addAll(Shape.detailsProperties);
+		detailsProperties.add(new ShapeDetailsProperty<Square>("Width", InputType.NUMBER, "width", Square.class));
+	}
 	
 	public Square(float w) {
 		super("Square-" + w);
-		width = new SimpleFloatProperty(w);
+		width = new SimpleDoubleProperty(w);
 	}
 	public Square(float w, float x, float y) {
 		super("Square-" + w, x, y);
-		width = new SimpleFloatProperty(w);
+		width = new SimpleDoubleProperty(w);
 
 	}
 	
@@ -34,18 +39,13 @@ public class Square extends Shape {
 		rectangle.setY(y.get());
 		rectangle.setWidth(width.get());
 		rectangle.setHeight(width.get());
+		rectangle.visibleProperty().bind(visible);
 		return rectangle;
 	}
 
 	@Override
-	public void updateDetailsForm(Pane pane) {
-		super.updateDetailsForm(pane);
-		Node[] widthNodes = ShapeDetailsInput.getLabelInput("Width", ShapeDetailsInput.InputTypes.NUMBER, width);
-		TilePane box = new TilePane();
-		box.setPrefColumns(2);
-		box.getChildren().addAll(widthNodes[0], widthNodes[1]);
-		pane.getChildren().add(box);
-
+	public Pane getDetailsForm() {
+		return getDetailsForm(detailsProperties);
 	}
 
 }

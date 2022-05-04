@@ -21,8 +21,11 @@ public class Canvas extends Pane {
 	public void renderShapes() {
 		ObservableList<javafx.scene.Node> children = getChildren();
 		shapes.forEach(shape -> {
-			if (shape.getVisibleProp().getValue()) {
-				children.add(shape.getShape());
+			if (shape.visibleProperty().getValue()) {
+				Object o = shape.getShape();
+				if (o != null) {
+					children.add(shape.getShape());
+				}
 			}
 		});
 	}

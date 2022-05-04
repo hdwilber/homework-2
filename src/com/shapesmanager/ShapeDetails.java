@@ -1,59 +1,88 @@
 package com.shapesmanager;
 
-import java.util.Optional;
+import java.lang.reflect.Field;
 import java.text.DecimalFormat;
-import java.text.Format;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import javafx.beans.Observable;
-import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.FloatProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ObservableValue;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
-import javafx.util.StringConverter;
-import javafx.util.converter.FloatStringConverter;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.TextAlignment;
 import javafx.util.converter.NumberStringConverter;
 
-class ShapeDetailsInput {
-	static enum InputTypes {
-		TEXT,
-		NUMBER,
+enum InputType {
+	TEXT,
+	NUMBER,
+}
+
+class ShapeDetailsProperty<T> {
+	String label;
+	InputType type;
+	String field;
+	Class<T> className;
+	public ShapeDetailsProperty(String l, InputType t, String f) {
+		label = l;
+		type = t;
+		field = f;
 	}
-	public static <T> Node[] getLabelInput(String label, InputTypes t, Property<T> value) {
-		Label labelNode = new Label(label);
-		if (t == InputTypes.TEXT) {
-			TextField input = new TextField();
-			if(value instanceof StringProperty) {
-				((StringProperty)value).bind(input.textProperty());
-			}
-
-			Node[] result = { labelNode, input };
-			return result;
-		} else if (t == InputTypes.NUMBER) {
-			TextField input = new TextField();
-			if(value instanceof FloatProperty) {
-				NumberStringConverter converter = new NumberStringConverter(new DecimalFormat());
-				Bindings.bindBidirectional(input.textProperty(), (Property<Number>)value, converter);
-			}
-
-			Node[] result = { labelNode, input };
-			return result;
+	public ShapeDetailsProperty(String l, InputType t, String f, Class<T> c) {
+		this(l, t, f);
+		className = c;
+	}
+	
+	public List<Node> getLabelInputTextFor(Property prop) {
+		TextField input = new TextField();
+		if(prop instanceof StringProperty) {
+			input.textProperty().bind(prop);
 		}
-		return null;
+		Label label = getLabel();
+		List<Node> result = new ArrayList<Node>();
+		result.add(label);
+		result.add(input);
+		return result;
+	}
+	
+	public Label getLabel() {
+		Label label = new Label(this.label + ":");
+		label.setTextAlignment(TextAlignment.JUSTIFY);
+		return label;
+	}
+	public List<Node> getLabelInputNumberFor(Property prop) {
+		TextField input = new TextField();
+		NumberStringConverter converter = new NumberStringConverter(new DecimalFormat());
+		Bindings.bindBidirectional(input.textProperty(), (Property<Number>)prop, converter);
+
+		Label label = getLabel();
+		List<Node> result = new ArrayList<Node>();
+		result.add(label);
+		result.add(input);
+		return result;
+	}
+
+	public List<Node> getLabelInputFor(Shape shape) {
+		try {
+			Field field = className.getDeclaredField(this.field);
+			Property prop = (Property)field.get(shape);
+			if (type == InputType.TEXT) {
+				return getLabelInputTextFor(prop);
+			} else if (type == InputType.NUMBER) {
+				return getLabelInputNumberFor(prop);
+			}
+		} catch (NoSuchFieldException | SecurityException | IllegalAccessException e) {
+			// TODO Auto-generated catch block
+
+			e.printStackTrace();
+		}
+		return new ArrayList<Node>();
 	}
 }
 
@@ -76,17 +105,16 @@ public class ShapeDetails extends Dialog<Shape>{
 		getDialogPane().getButtonTypes().addAll(okButtonType, cancelButtonType);
 		setResizable(true);
 
-		VBox box = new VBox(8);
-		box.setPadding(new Insets(25, 25, 25, 25));
-		
 		if (shape != null) {
-			shape.updateDetailsForm(box);
-			setTitle(shape.id.get());
+			Pane form = shape.getDetailsForm();
+			setTitle(shape.idProperty().get());
 			shape.id.addListener((arg, oldVal,newVal) -> setTitle(newVal));
+			getDialogPane().setContent(form);
+			setWidth(400);
+			setHeight(400);
 		} else {
 			setTitle("New Shape");
 		}
-		getDialogPane().setContent(box);
 		setResultConverter(btn -> btn.getButtonData() == ButtonData.OK_DONE ? shape : null);
 	}
 }

@@ -1,17 +1,29 @@
 package com.shapesmanager;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 public class Circle extends Shape {
-	float radius;
+	DoubleProperty radius;
 
 	public Circle(float r) {
 		super("Circle-" + r);
-		radius = r;
+		radius = new SimpleDoubleProperty(r);
 	}
 	public Circle(float r, float x, float y) {
 		super("Circle-" + r, x, y);
-		radius = r;
+		radius = new SimpleDoubleProperty(r);
+	}
+
+	public static List<ShapeDetailsProperty<?>> detailsProperties = new ArrayList<ShapeDetailsProperty<?>>();
+	static {
+		detailsProperties.addAll(Shape.detailsProperties);
+		detailsProperties.add(new ShapeDetailsProperty<Circle>("Radius", InputType.NUMBER, "radius", Circle.class));
 	}
 
 	@Override
@@ -21,11 +33,14 @@ public class Circle extends Shape {
 
 	@Override
 	public javafx.scene.shape.Shape getShape() {
-		// TODO Auto-generated method stub
-		javafx.scene.shape.Circle circle = new javafx.scene.shape.Circle(radius,Color.BLUE);
+		javafx.scene.shape.Circle circle = new javafx.scene.shape.Circle(radius.get(),Color.BLUE);
 		circle.setCenterX(x.get());
 		circle.setCenterY(y.get());
 		circle.visibleProperty().bind(visible);
 		return circle;
+	}
+	@Override
+	public Pane getDetailsForm() {
+		return getDetailsForm(detailsProperties);
 	}
 }

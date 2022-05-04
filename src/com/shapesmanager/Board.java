@@ -3,26 +3,16 @@ package com.shapesmanager;
 import java.util.List;
 import java.util.Optional;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableBooleanValue;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.cell.CheckBoxListCell;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -58,18 +48,15 @@ class ShapeCell extends ListCell<Shape> {
 			setText(null);
 			setGraphic(null);
 		} else {
-			SimpleBooleanProperty visibleProp = (SimpleBooleanProperty)item.getVisibleProp();
 			CheckBox checkbox;
 			Label label;
-			Button button;
 			checkbox = new CheckBox();
 			label = new Label(item.toString());
-			button = new Button("...");
 			row.getChildren().clear();
-			row.getChildren().addAll(checkbox, label, button);
-			checkbox.setSelected(visibleProp.getValue());
+			row.getChildren().addAll(checkbox, label);
+			checkbox.setSelected(item.visibleProperty().getValue());
 			checkbox.setOnAction(e -> {
-				item.visible.set(checkbox.isSelected());
+				item.visibleProperty().set(checkbox.isSelected());
 			});
 			label.setText(item.toString());
 			setGraphic(row);
@@ -84,13 +71,13 @@ public class Board implements Callback<ListView<Shape>, ListCell<Shape>>{
 
 	public Board() {
 		shapes = FXCollections.observableArrayList();
-		shapes.add(new Square(100, 500, 500));
+		shapes.add(new Square(100));
 		shapes.add(new Circle(200, 500, 500));
-		shapes.add(new Circle(250, 125, 450));
 		shapes.add(new Circle(250));
-		shapes.add(new Square(50, 400, 300));
+		shapes.add(new Circle(250));
+		shapes.add(new Square(50));
+		shapes.add(new Image("LAchuchamare"));
 
-		
 		selectedShape = new SimpleObjectProperty<Shape>();
 	}
 	public List<Shape> getShapes() {
