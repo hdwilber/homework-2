@@ -17,11 +17,11 @@ public class Square extends Shape {
 		detailsProperties.add(new ShapeDetailsProperty<Square>("Width", InputType.NUMBER, "width", Square.class));
 	}
 	
-	public Square(float w) {
+	public Square(double w) {
 		super("Square-" + w);
 		width = new SimpleDoubleProperty(w);
 	}
-	public Square(float w, float x, float y) {
+	public Square(double w, double x, double y) {
 		super("Square-" + w, x, y);
 		width = new SimpleDoubleProperty(w);
 

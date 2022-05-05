@@ -77,6 +77,9 @@ public class Board implements Callback<ListView<Shape>, ListCell<Shape>>{
 		shapes.add(new Circle(250));
 		shapes.add(new Square(50));
 		shapes.add(new Image("LAchuchamare"));
+		shapes.add(new Polygon(new Double[] {
+				500.0, 333.0, 600.0, 1000.0, 23.0, 120.0
+		}));
 
 		selectedShape = new SimpleObjectProperty<Shape>();
 	}

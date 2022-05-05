@@ -3,10 +3,12 @@ package com.shapesmanager;
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.FloatProperty;
+import javafx.beans.property.ListProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Node;
@@ -22,6 +24,7 @@ import javafx.util.converter.NumberStringConverter;
 enum InputType {
 	TEXT,
 	NUMBER,
+	LIST_NUMBER,
 }
 
 class ShapeDetailsProperty<T> {
@@ -37,6 +40,33 @@ class ShapeDetailsProperty<T> {
 	public ShapeDetailsProperty(String l, InputType t, String f, Class<T> c) {
 		this(l, t, f);
 		className = c;
+	}
+	
+	public List<Node> getLabelInputListNumber(Property prop) {
+		List<Node> result = new ArrayList<Node>();
+		if (prop instanceof ListProperty) {
+			List<Double> values = ((ListProperty)prop).getValue();
+			Iterator<Double> it = values.iterator();
+			int index = 1;
+			while(it.hasNext()) {
+				Label labelX = new Label(this.label + " X" + index);
+				TextField inputX = new TextField();
+				Double valueX = it.next();
+
+				Label labelY = new Label(this.label + " Y" + index);
+				TextField inputY = new TextField();
+				Double valueY = it.next();
+
+				inputX.textProperty().set(valueX.toString());
+				inputY.textProperty().set(valueY.toString());
+				result.add(labelX);
+				result.add(inputX);
+				result.add(labelY);
+				result.add(inputY);
+				index++;
+			}
+		}
+		return result;
 	}
 	
 	public List<Node> getLabelInputTextFor(Property prop) {
@@ -76,6 +106,8 @@ class ShapeDetailsProperty<T> {
 				return getLabelInputTextFor(prop);
 			} else if (type == InputType.NUMBER) {
 				return getLabelInputNumberFor(prop);
+			} else if (type == InputType.LIST_NUMBER) {
+				return getLabelInputListNumber(prop);
 			}
 		} catch (NoSuchFieldException | SecurityException | IllegalAccessException e) {
 			// TODO Auto-generated catch block

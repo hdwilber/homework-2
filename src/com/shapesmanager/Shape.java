@@ -81,9 +81,20 @@ public abstract class Shape {
 		while(it.hasNext()) {
 			List<Node> nodes = it.next().getLabelInputFor(this);
 			if (!nodes.isEmpty()) {
-				grid.add(nodes.get(0), 0, rows);
-				grid.add(nodes.get(1), 1, rows);
-				rows++;
+				if (nodes.size() == 2) {
+					grid.add(nodes.get(0), 0, rows);
+					grid.add(nodes.get(1), 1, rows);
+					rows++;
+				} else {
+					System.out.println("more nodes " + nodes.toString());
+					for(int j = 0; j < nodes.size(); j++) {
+						Node node = nodes.get(j);
+						grid.add(node, j % 2, rows);
+						if (j % 2 == 1) {
+							rows++;
+						}
+					}
+				}
 			}
 		}
 		return grid;
