@@ -3,7 +3,6 @@ package com.shapesmanager;
 import java.util.List;
 import java.util.Optional;
 
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -34,7 +33,6 @@ class ShapeCell extends ListCell<Shape> {
 		Optional<Shape> result = modal.showAndWait();
 		if (result.isPresent()) {
 			result.ifPresent(response -> {
-				System.out.println("This is the result: " + response.toString());
 				this.commitEdit(response);
 			});
 		} else {
@@ -67,7 +65,6 @@ class ShapeCell extends ListCell<Shape> {
 
 public class Board implements Callback<ListView<Shape>, ListCell<Shape>>{
 	ObservableList<Shape> shapes;
-	SimpleObjectProperty<Shape> selectedShape;
 
 	public Board() {
 		shapes = FXCollections.observableArrayList();
@@ -76,12 +73,10 @@ public class Board implements Callback<ListView<Shape>, ListCell<Shape>>{
 		shapes.add(new Circle(250));
 		shapes.add(new Circle(250));
 		shapes.add(new Square(50));
-		shapes.add(new Image("LAchuchamare"));
+		shapes.add(new Image("Image"));
 		shapes.add(new Polygon(new Double[] {
 				500.0, 333.0, 600.0, 1000.0, 23.0, 120.0
 		}));
-
-		selectedShape = new SimpleObjectProperty<Shape>();
 	}
 	public List<Shape> getShapes() {
 		return shapes;
@@ -100,10 +95,31 @@ public class Board implements Callback<ListView<Shape>, ListCell<Shape>>{
 
         Button addButton = new Button("Add");
         addButton.setOnAction(e -> {
-        	ShapeDetails modal = new ShapeDetails();
-        	modal.show();
+        	AddNewDialog modal = new AddNewDialog();
+			Optional<Shape> result = modal.showAndWait();
+			if (result.isPresent()) {
+				result.ifPresent(response -> {
+//					this.commitEdit(response);
+					System.out.println("THE RESULT");
+					System.out.println(response);
+					ShapeDetails newModal = new ShapeDetails(response);
+					Optional<Shape> newResult = newModal.showAndWait();
+					if (result.isPresent()) {
+						result.ifPresent(newShape -> {
+							System.out.println("THIS IS THE FINAL RESPONSE");
+							System.out.println(newShape);
+						});
+					} else {
+							System.out.println("DISCARDING THE NEW INSTANCE");
+					}
+
+
+
+
+				});
+			}
         });
-        HBox buttonBar = new HBox( 20, addButton);
+        HBox buttonBar = new HBox(20, addButton);
         root.setBottom(buttonBar);
 
         return root;

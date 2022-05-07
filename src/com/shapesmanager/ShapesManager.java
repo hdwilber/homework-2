@@ -36,6 +36,7 @@ public class ShapesManager extends Application {
         Scene scene = new Scene(root, 450, 200);
         stage.setScene(scene);
         stage.setTitle("JavaFX Test");
+        stage.sizeToScene();
         stage.show();
 	}
 }

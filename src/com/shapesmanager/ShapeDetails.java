@@ -1,5 +1,8 @@
 package com.shapesmanager;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -12,6 +15,7 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
@@ -19,12 +23,15 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.util.converter.NumberStringConverter;
 
 enum InputType {
-	TEXT,
-	NUMBER,
-	LIST_NUMBER,
+       TEXT,
+       NUMBER,
+       LIST_NUMBER,
+       IMAGE,
 }
 
 class ShapeDetailsProperty<T> {
@@ -41,7 +48,7 @@ class ShapeDetailsProperty<T> {
 		this(l, t, f);
 		className = c;
 	}
-	
+
 	public List<Node> getLabelInputListNumber(Property prop) {
 		List<Node> result = new ArrayList<Node>();
 		if (prop instanceof ListProperty) {
@@ -68,7 +75,34 @@ class ShapeDetailsProperty<T> {
 		}
 		return result;
 	}
-	
+	public List<Node> getLabelInputImageFor(Property<javafx.scene.image.Image> prop) {
+		Label label = getLabel();
+		Button button = new Button("Load");
+		List<Node> result = new ArrayList<Node>();
+		result.add(label);
+		result.add(button);
+
+		button.setOnAction(e -> {
+			FileChooser fileChooser = new FileChooser();
+			fileChooser.setTitle("Open Resource File");
+			fileChooser.getExtensionFilters().addAll(
+					new ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif")
+					);
+			File selectedFile = fileChooser.showOpenDialog(button.getScene().getWindow());
+			if (selectedFile != null) {
+				try {
+					javafx.scene.image.Image image;
+					image = new javafx.scene.image.Image(new FileInputStream(selectedFile));
+					prop.setValue(image);
+				} catch (FileNotFoundException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		return result;
+
+	}
+
 	public List<Node> getLabelInputTextFor(Property prop) {
 		TextField input = new TextField();
 		if(prop instanceof StringProperty) {
@@ -80,7 +114,7 @@ class ShapeDetailsProperty<T> {
 		result.add(input);
 		return result;
 	}
-	
+
 	public Label getLabel() {
 		Label label = new Label(this.label + ":");
 		label.setTextAlignment(TextAlignment.JUSTIFY);
@@ -108,6 +142,8 @@ class ShapeDetailsProperty<T> {
 				return getLabelInputNumberFor(prop);
 			} else if (type == InputType.LIST_NUMBER) {
 				return getLabelInputListNumber(prop);
+			} else if (type == InputType.IMAGE) {
+				return getLabelInputImageFor(prop);
 			}
 		} catch (NoSuchFieldException | SecurityException | IllegalAccessException e) {
 			// TODO Auto-generated catch block

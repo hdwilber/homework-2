@@ -3,9 +3,11 @@ package com.shapesmanager;
 import java.util.List;
 
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 
-public class Canvas extends Pane {
+public class Canvas extends ScrollPane {
 	long width;
 	long height;
 	List<Shape> shapes;
@@ -19,14 +21,16 @@ public class Canvas extends Pane {
 	}
 	
 	public void renderShapes() {
-		ObservableList<javafx.scene.Node> children = getChildren();
+		Pane content = new Pane();
+		ObservableList<javafx.scene.Node> children = content.getChildren();
 		shapes.forEach(shape -> {
 			if (shape.visibleProperty().getValue()) {
-				Object o = shape.getShape();
+				Node o = shape.getShape();
 				if (o != null) {
-					children.add(shape.getShape());
+					children.add(o);
 				}
 			}
 		});
+		setContent(content);
 	}
 }

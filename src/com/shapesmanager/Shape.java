@@ -18,10 +18,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 
 public abstract class Shape {
+	private String internalId;
 	StringProperty id;
 	DoubleProperty x;
 	DoubleProperty y;
 	BooleanProperty visible;
+	BooleanProperty empty;
 
 	static List<ShapeDetailsProperty<?>> detailsProperties;
 	static {
@@ -42,10 +44,15 @@ public abstract class Shape {
 	}
 
 	public Shape(String i, double x, double y ) {
+		internalId = Utils.getUUID();
 		id = new SimpleStringProperty(i);
 		visible = new SimpleBooleanProperty(true);
+		empty = new SimpleBooleanProperty(true);
 		this.x = new SimpleDoubleProperty(x);
 		this.y = new SimpleDoubleProperty(y);
+	}
+	public String internalId() {
+		return internalId;
 	}
 
 	public StringProperty idProperty() {
@@ -66,7 +73,7 @@ public abstract class Shape {
 	
 	public abstract Pane getDetailsForm();
 
-	public abstract javafx.scene.shape.Shape getShape();
+	public abstract Node getShape();
 
 	public Pane getDetailsForm(List<ShapeDetailsProperty<?>> inputs) {
 		GridPane grid = new GridPane();
@@ -103,5 +110,4 @@ public abstract class Shape {
 	public String toString() {
 		return this.id.get();
 	}
-
 }

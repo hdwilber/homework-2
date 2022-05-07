@@ -11,6 +11,10 @@ import javafx.scene.paint.Color;
 public class Circle extends Shape {
 	DoubleProperty radius;
 
+	public Circle() {
+		this(0);
+		empty.set(true);
+	}
 	public Circle(float r) {
 		super("Circle-" + r);
 		radius = new SimpleDoubleProperty(r);
@@ -21,6 +25,7 @@ public class Circle extends Shape {
 	}
 
 	public static List<ShapeDetailsProperty<?>> detailsProperties = new ArrayList<ShapeDetailsProperty<?>>();
+	public static AddNewOption addNewOption = new AddNewOption("/circle-solid.svg", "Circle", Circle.class);
 	static {
 		detailsProperties.addAll(Shape.detailsProperties);
 		detailsProperties.add(new ShapeDetailsProperty<Circle>("Radius", InputType.NUMBER, "radius", Circle.class));
