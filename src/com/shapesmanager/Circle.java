@@ -25,7 +25,7 @@ public class Circle extends Shape {
 	}
 
 	public static List<ShapeDetailsProperty<?>> detailsProperties = new ArrayList<ShapeDetailsProperty<?>>();
-	public static AddNewOption addNewOption = new AddNewOption("/circle-solid.svg", "Circle", Circle.class);
+	public static AddNewOption addNewOption = new AddNewOption<Circle>("/circle-solid.svg", "Circle", Circle.class);
 	static {
 		detailsProperties.addAll(Shape.detailsProperties);
 		detailsProperties.add(new ShapeDetailsProperty<Circle>("Radius", InputType.NUMBER, "radius", Circle.class));

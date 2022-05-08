@@ -12,7 +12,7 @@ public class Square extends Shape {
 	DoubleProperty width;
 
 	public static List<ShapeDetailsProperty<?>> detailsProperties;
-	public static AddNewOption addNewOption = new AddNewOption("/square-solid.svg", "Square", Square.class);
+	public static AddNewOption<Square> addNewOption = new AddNewOption<Square>("/square-solid.svg", "Square", Square.class);
 	static {
 		detailsProperties = new ArrayList<ShapeDetailsProperty<?>>();
 		detailsProperties.addAll(Shape.detailsProperties);

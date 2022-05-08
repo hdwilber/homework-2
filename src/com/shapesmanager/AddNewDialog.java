@@ -70,22 +70,23 @@ public class AddNewDialog extends Dialog<Shape> {
 		
 	}
 	public void addOptions() {
-		List<AddNewOption> newButtons = new ArrayList<AddNewOption>();
+		List<AddNewOption<?>> newButtons = new ArrayList<AddNewOption<?>>();
 		newButtons.add(Square.addNewOption);
 		newButtons.add(Circle.addNewOption);
 		newButtons.add(Polygon.addNewOption);
 		newButtons.add(Image.addNewOption);
 		
-		Iterator<AddNewOption> it = newButtons.iterator();
+		Iterator<AddNewOption<?>> it = newButtons.iterator();
 		FlowPane pane = new FlowPane();
 		ObservableList<Node> childrenPane = pane.getChildren();
 		while(it.hasNext()) {
-			AddNewOption option = it.next();
+			AddNewOption<?> option = it.next();
 			ImageButton button = option.getImageButton();
 			childrenPane.add(button);
 			button.setOnAction(e -> {
 				try {
-					this.setResult((com.shapesmanager.Shape) option.createNewInstance());
+					Shape instance = (Shape)option.createNewInstance();
+					this.setResult(instance);
 					hide();
 				} catch (InstantiationException | IllegalAccessException e1) {
 					// TODO Auto-generated catch block
