@@ -14,7 +14,7 @@ public class Polygon extends Shape {
 	ListProperty<Double> sides;
 
 	public static List<ShapeDetailsProperty<?>> detailsProperties;
-	public static AddNewOption addNewOption = new AddNewOption("/draw-polygon-solid.svg", "Polygon", Polygon.class);
+	public static AddNewOption<Polygon> addNewOption = new AddNewOption<Polygon>("/draw-polygon-solid.svg", "Polygon", Polygon.class);
 	static {
 		detailsProperties = new ArrayList<ShapeDetailsProperty<?>>();
 		detailsProperties.addAll(Shape.detailsProperties);
@@ -48,6 +48,8 @@ public class Polygon extends Shape {
 	public Node getShape() {
 		javafx.scene.shape.Polygon polygon = new javafx.scene.shape.Polygon();
 		polygon.getPoints().addAll(sides.getValue());
+		polygon.translateXProperty().bind(x);
+		polygon.translateYProperty().bind(y);
 		polygon.visibleProperty().bind(visible);
 		return polygon;
 	}

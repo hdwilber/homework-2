@@ -38,7 +38,7 @@ public class Image extends Shape {
 	}
 
 	public static List<ShapeDetailsProperty<?>> detailsProperties;
-	public static AddNewOption addNewOption = new AddNewOption("/image-solid.svg", "Image", Image.class);
+	public static AddNewOption<Image> addNewOption = new AddNewOption<Image>("/image-solid.svg", "Image", Image.class);
 	static {
 		detailsProperties = new ArrayList<ShapeDetailsProperty<?>>();
 		detailsProperties.addAll(Shape.detailsProperties);

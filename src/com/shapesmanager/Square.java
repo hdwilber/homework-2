@@ -17,7 +17,6 @@ public class Square extends Shape {
 		detailsProperties = new ArrayList<ShapeDetailsProperty<?>>();
 		detailsProperties.addAll(Shape.detailsProperties);
 		detailsProperties.add(new ShapeDetailsProperty<Square>("Width", InputType.NUMBER, "width", Square.class));
-
 	}
 	
 	public Square() {
@@ -41,10 +40,10 @@ public class Square extends Shape {
 	@Override
 	public Node getShape() {
 		javafx.scene.shape.Rectangle rectangle = new javafx.scene.shape.Rectangle();
-		rectangle.setX(x.get());
-		rectangle.setY(y.get());
-		rectangle.setWidth(width.get());
-		rectangle.setHeight(width.get());
+		rectangle.xProperty().bind(x);
+		rectangle.yProperty().bind(y);
+		rectangle.widthProperty().bind(width);
+		rectangle.heightProperty().bind(width);
 		rectangle.visibleProperty().bind(visible);
 		return rectangle;
 	}

@@ -25,7 +25,7 @@ public class Circle extends Shape {
 	}
 
 	public static List<ShapeDetailsProperty<?>> detailsProperties = new ArrayList<ShapeDetailsProperty<?>>();
-	public static AddNewOption addNewOption = new AddNewOption<Circle>("/circle-solid.svg", "Circle", Circle.class);
+	public static AddNewOption<Circle> addNewOption = new AddNewOption<Circle>("/circle-solid.svg", "Circle", Circle.class);
 	static {
 		detailsProperties.addAll(Shape.detailsProperties);
 		detailsProperties.add(new ShapeDetailsProperty<Circle>("Radius", InputType.NUMBER, "radius", Circle.class));
@@ -39,8 +39,9 @@ public class Circle extends Shape {
 	@Override
 	public javafx.scene.shape.Shape getShape() {
 		javafx.scene.shape.Circle circle = new javafx.scene.shape.Circle(radius.get(),Color.BLUE);
-		circle.setCenterX(x.get());
-		circle.setCenterY(y.get());
+		circle.radiusProperty().bind(radius);
+		circle.centerXProperty().bind(x);
+		circle.centerYProperty().bind(y);
 		circle.visibleProperty().bind(visible);
 		return circle;
 	}

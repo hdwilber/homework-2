@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -122,11 +123,11 @@ class ShapeDetailsProperty<T> {
 	}
 	public List<Node> getLabelInputNumberFor(Property prop) {
 		TextField input = new TextField();
+		List<Node> result = new ArrayList<Node>();
 		NumberStringConverter converter = new NumberStringConverter(new DecimalFormat());
 		Bindings.bindBidirectional(input.textProperty(), (Property<Number>)prop, converter);
 
 		Label label = getLabel();
-		List<Node> result = new ArrayList<Node>();
 		result.add(label);
 		result.add(input);
 		return result;
