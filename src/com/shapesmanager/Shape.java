@@ -25,6 +25,14 @@ public abstract class Shape {
 	BooleanProperty visible;
 	BooleanProperty empty;
 
+	enum ShapeType {
+		NONE,
+		SQUARE,
+		CIRCLE,
+		POLYGON,
+		IMAGE,
+		GROUP,
+	}
 	static List<ShapeDetailsProperty<?>> detailsProperties;
 	static {
 		detailsProperties = new ArrayList<ShapeDetailsProperty<?>>();

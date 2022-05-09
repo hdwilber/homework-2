@@ -32,6 +32,7 @@ enum InputType {
        TEXT,
        NUMBER,
        LIST_NUMBER,
+       LIST_SHAPE,
        IMAGE,
 }
 
@@ -179,8 +180,6 @@ public class ShapeDetails extends Dialog<Shape>{
 			setTitle(shape.idProperty().get());
 			shape.id.addListener((arg, oldVal,newVal) -> setTitle(newVal));
 			getDialogPane().setContent(form);
-			setWidth(400);
-			setHeight(400);
 		} else {
 			setTitle("New Shape");
 		}

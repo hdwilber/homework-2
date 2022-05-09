@@ -3,131 +3,81 @@ package com.shapesmanager;
 import java.util.List;
 import java.util.Optional;
 
-import javafx.collections.FXCollections;
+import javafx.beans.property.ListProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.util.Callback;
+import javafx.scene.layout.VBox;
 
+public class Board {
+	ListProperty<Shape> shapes;
+	ShapeListView shapeListView;
 
-class ShapeCell extends ListCell<Shape> {
-	HBox row;
-	public ShapeCell() {
-		row = new HBox(16);
-		row.setAlignment(Pos.CENTER_LEFT);
-		setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+	public Board(ListProperty<Shape> s) {
+		shapes = s;
+		shapeListView = new ShapeListView(s);
 	}
-	
-	@Override
-	public void startEdit() {
-		super.startEdit();
-		ShapeDetails modal = new ShapeDetails(getItem());
-		Optional<Shape> result = modal.showAndWait();
-		if (result.isPresent()) {
-			result.ifPresent(response -> {
-				this.commitEdit(response);
-			});
-		} else {
-			this.cancelEdit();
+
+	public Shape getNewShapePerType(Shape.ShapeType type) {
+		switch(type) {
+		case CIRCLE:  return new Circle();
+		case SQUARE: return new Square();
+		case POLYGON: return new Polygon();
+		case IMAGE: return new Image();
+		default:
+			break;
 		}
+		return null;
 	}
 
-	protected void updateItem(Shape item, boolean empty) {
-		super.updateItem(item, empty);
-		if (empty || item == null) {
-			setText(null);
-			setGraphic(null);
-		} else {
-			CheckBox checkbox;
-			Label label;
-			checkbox = new CheckBox();
-			label = new Label(item.toString());
-			row.getChildren().clear();
-			row.getChildren().addAll(checkbox, label);
-			checkbox.setSelected(item.visibleProperty().getValue());
-			checkbox.setOnAction(e -> {
-				item.visibleProperty().set(checkbox.isSelected());
-			});
-			label.setText(item.toString());
-			setGraphic(row);
-		}
-	}
-	
-}
-
-public class Board implements Callback<ListView<Shape>, ListCell<Shape>>{
-	ObservableList<Shape> shapes;
-
-	public Board() {
-		shapes = FXCollections.observableArrayList();
-		shapes.add(new Square(100));
-		shapes.add(new Circle(200, 500, 500));
-		shapes.add(new Circle(250));
-		shapes.add(new Circle(250));
-		shapes.add(new Square(50));
-		shapes.add(new Image("Image"));
-		shapes.add(new Polygon(new Double[] {
-				500.0, 333.0, 600.0, 1000.0, 23.0, 120.0
-		}));
-	}
-	public List<Shape> getShapes() {
-		return shapes;
-	}
-	
-	public ListView<Shape> getListView() {
-		ListView<Shape> listView = new ListView<Shape>(shapes);
-		listView.setCellFactory(this);
-		listView.setEditable(true);
-		return listView;
-	}
-	
-	public Pane getBoard() {
-        BorderPane root = new BorderPane();
-        root.setCenter(getListView());
-
+	public Pane getPane() {
+        VBox pane = new VBox(16);
         Button addButton = new Button("Add");
         addButton.setOnAction(e -> {
         	AddNewDialog modal = new AddNewDialog();
-			Optional<Shape> result = modal.showAndWait();
-			if (result.isPresent()) {
-				result.ifPresent(response -> {
-//					this.commitEdit(response);
-					System.out.println("THE RESULT");
-					System.out.println(response);
-					ShapeDetails newModal = new ShapeDetails(response);
+			Optional<Shape.ShapeType> result = modal.showAndWait();
+			System.out.println("THE RESTL: " + result.toString());
+			if (result.isPresent() && result.get() != Shape.ShapeType.NONE) {
+				result.ifPresent(shapeType -> {
+					Shape emptyShape = getNewShapePerType(shapeType);
+					ShapeDetails newModal = new ShapeDetails(emptyShape);
 					Optional<Shape> newResult = newModal.showAndWait();
-					if (result.isPresent()) {
-						result.ifPresent(newShape -> {
-							System.out.println("THIS IS THE FINAL RESPONSE");
+					if (newResult.isPresent()) {
+						newResult.ifPresent(newShape -> {
 							System.out.println(newShape);
 						});
 					} else {
-							System.out.println("DISCARDING THE NEW INSTANCE");
+							System.out.println("Discard");
 					}
-
-
-
-
 				});
 			}
         });
-        HBox buttonBar = new HBox(20, addButton);
-        root.setBottom(buttonBar);
+        
+        Button groupButton = new Button("Group");
+        groupButton.setDisable(true);
+        Button deleteButton = new Button("Delete");
+        deleteButton.setDisable(true);
 
-        return root;
-	}
+		shapeListView.getSelectionModel().selectedIndexProperty().addListener((arg, oldVal, newVal) -> {
+			ObservableList<Integer> selected = shapeListView.getSelectionModel().getSelectedIndices();
+			groupButton.setDisable(selected.size() <= 1);
+			deleteButton.setDisable(selected.size() < 1);
+		});
 
-	@Override
-	public ListCell<Shape> call(ListView<Shape> arg0) {
-		ShapeCell cell = new ShapeCell();
-		return cell;
+		groupButton.setOnAction(e -> {
+			List<Shape> selectedShapes = shapeListView.getSelectionModel().getSelectedItems();
+			this.shapes.add(new Group(selectedShapes));
+			selectedShapes.forEach(shape -> {
+				shapes.remove(shape);
+			});
+		});
+        HBox buttonBox = new HBox(20, addButton, groupButton, deleteButton);
+        buttonBox.setAlignment(Pos.TOP_CENTER);
+
+        pane.getChildren().add(shapeListView);
+        pane.getChildren().add(buttonBox);
+        return pane;
 	}
 }

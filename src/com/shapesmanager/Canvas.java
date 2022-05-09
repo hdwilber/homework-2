@@ -2,7 +2,9 @@ package com.shapesmanager;
 
 import java.util.List;
 
+import javafx.beans.property.ListProperty;
 import javafx.collections.ObservableList;
+import javafx.collections.WeakListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
@@ -10,9 +12,9 @@ import javafx.scene.layout.Pane;
 public class Canvas extends ScrollPane {
 	long width;
 	long height;
-	List<Shape> shapes;
+	ListProperty<Shape> shapes;
 
-	public Canvas(List<Shape> s, long w, long h) {
+	public Canvas(ListProperty<Shape> s, long w, long h) {
 		width = w;
 		height = h;
 		shapes = s;

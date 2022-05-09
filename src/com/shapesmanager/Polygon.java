@@ -14,7 +14,7 @@ public class Polygon extends Shape {
 	ListProperty<Double> sides;
 
 	public static List<ShapeDetailsProperty<?>> detailsProperties;
-	public static AddNewOption<Polygon> addNewOption = new AddNewOption<Polygon>("/draw-polygon-solid.svg", "Polygon", Polygon.class);
+	public static AddNewOption addNewOption = new AddNewOption("/draw-polygon-solid.png", "Polygon", ShapeType.POLYGON);
 	static {
 		detailsProperties = new ArrayList<ShapeDetailsProperty<?>>();
 		detailsProperties.addAll(Shape.detailsProperties);
