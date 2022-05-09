@@ -1,5 +1,6 @@
 package com.shapesmanager;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,7 +39,6 @@ public class Board {
         addButton.setOnAction(e -> {
         	AddNewDialog modal = new AddNewDialog();
 			Optional<Shape.ShapeType> result = modal.showAndWait();
-			System.out.println("THE RESTL: " + result.toString());
 			if (result.isPresent() && result.get() != Shape.ShapeType.NONE) {
 				result.ifPresent(shapeType -> {
 					Shape emptyShape = getNewShapePerType(shapeType);
@@ -46,10 +46,10 @@ public class Board {
 					Optional<Shape> newResult = newModal.showAndWait();
 					if (newResult.isPresent()) {
 						newResult.ifPresent(newShape -> {
-							System.out.println(newShape);
+							shapes.add(newShape);
 						});
 					} else {
-							System.out.println("Discard");
+						// Do nothing
 					}
 				});
 			}
@@ -69,7 +69,6 @@ public class Board {
 			
 			if (selected.size() == 1) {
 				Shape shape = shapes.get(selected.get(0));
-				System.out.println(shape);
 				if (shape != null && shape instanceof Group) {
 					ungroupButton.setDisable(false);
 				} else {
@@ -81,15 +80,16 @@ public class Board {
 		});
 
 		groupButton.setOnAction(e -> {
-			List<Shape> selectedShapes = shapeListView.getSelectionModel().getSelectedItems();
-			this.shapes.add(new Group(selectedShapes));
+			List<Shape> selectedShapes = new ArrayList<Shape>(shapeListView.getSelectionModel().getSelectedItems());
+			shapes.add(new Group(selectedShapes));
 			selectedShapes.forEach(shape -> {
 				shapes.remove(shape);
 			});
+			shapeListView.getSelectionModel().clearSelection();
 		});
 
 		deleteButton.setOnAction(e -> {
-			List<Shape> selectedShapes = shapeListView.getSelectionModel().getSelectedItems();
+			List<Shape> selectedShapes = new ArrayList<Shape>(shapeListView.getSelectionModel().getSelectedItems());
 			selectedShapes.forEach(shape -> {
 				shapes.remove(shape);
 			});
@@ -97,12 +97,13 @@ public class Board {
 		});
 		
 		ungroupButton.setOnAction(e -> {
-			List<Shape> selectedShapes = shapeListView.getSelectionModel().getSelectedItems();
+			List<Shape> selectedShapes = new ArrayList<Shape>(shapeListView.getSelectionModel().getSelectedItems());
 			if (selectedShapes.size() == 1) {
 				Group group = (Group)selectedShapes.get(0);
 				shapes.remove(group);
 				shapes.addAll(group.shapes);
 			}
+			shapeListView.getSelectionModel().clearSelection();
 		});
 
         HBox buttonBox = new HBox(20, addButton, groupButton, ungroupButton, deleteButton);
