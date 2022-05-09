@@ -21,10 +21,16 @@ public class Group extends Shape {
 	public Group() {
 		super("Group");
 		shapes = new SimpleListProperty<Shape>(FXCollections.observableArrayList(new Shape[]{}));
+		visible.addListener((arg, oldVal,newVal) -> {
+			shapes.forEach(shape -> shape.visible.set(newVal));
+		});
 	}
 	public Group(List<Shape> s) {
 		super("Group");
 		shapes = new SimpleListProperty<Shape>(FXCollections.observableArrayList(s));
+		visible.addListener((arg, oldVal,newVal) -> {
+			shapes.forEach(shape -> shape.visible.set(newVal));
+		});
 	}
 
 	@Override

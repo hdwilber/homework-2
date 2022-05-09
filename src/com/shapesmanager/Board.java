@@ -56,6 +56,8 @@ public class Board {
         });
         
         Button groupButton = new Button("Group");
+        Button ungroupButton = new Button("Ungroup");
+        ungroupButton.setDisable(true);
         groupButton.setDisable(true);
         Button deleteButton = new Button("Delete");
         deleteButton.setDisable(true);
@@ -64,6 +66,18 @@ public class Board {
 			ObservableList<Integer> selected = shapeListView.getSelectionModel().getSelectedIndices();
 			groupButton.setDisable(selected.size() <= 1);
 			deleteButton.setDisable(selected.size() < 1);
+			
+			if (selected.size() == 1) {
+				Shape shape = shapes.get(selected.get(0));
+				System.out.println(shape);
+				if (shape != null && shape instanceof Group) {
+					ungroupButton.setDisable(false);
+				} else {
+					ungroupButton.setDisable(true);
+				}
+			} else {
+				ungroupButton.setDisable(true);
+			}
 		});
 
 		groupButton.setOnAction(e -> {
@@ -81,8 +95,17 @@ public class Board {
 			});
 			shapeListView.getSelectionModel().clearSelection();
 		});
+		
+		ungroupButton.setOnAction(e -> {
+			List<Shape> selectedShapes = shapeListView.getSelectionModel().getSelectedItems();
+			if (selectedShapes.size() == 1) {
+				Group group = (Group)selectedShapes.get(0);
+				shapes.remove(group);
+				shapes.addAll(group.shapes);
+			}
+		});
 
-        HBox buttonBox = new HBox(20, addButton, groupButton, deleteButton);
+        HBox buttonBox = new HBox(20, addButton, groupButton, ungroupButton, deleteButton);
         buttonBox.setAlignment(Pos.TOP_CENTER);
 
         pane.getChildren().add(shapeListView);

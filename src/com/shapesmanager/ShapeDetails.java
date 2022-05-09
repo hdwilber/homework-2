@@ -22,10 +22,12 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.util.converter.DoubleStringConverter;
 import javafx.util.converter.NumberStringConverter;
 
 enum InputType {
@@ -66,6 +68,8 @@ class ShapeDetailsProperty<T> {
 				TextField inputY = new TextField();
 				Double valueY = it.next();
 
+				inputX.setTextFormatter(new TextFormatter<>(new DoubleStringConverter()));
+				inputY.setTextFormatter(new TextFormatter<>(new DoubleStringConverter()));
 				inputX.textProperty().set(valueX.toString());
 				inputY.textProperty().set(valueY.toString());
 				result.add(labelX);
@@ -125,6 +129,7 @@ class ShapeDetailsProperty<T> {
 	public List<Node> getLabelInputNumberFor(Property prop) {
 		TextField input = new TextField();
 		List<Node> result = new ArrayList<Node>();
+		input.setTextFormatter(new TextFormatter<>(new DoubleStringConverter()));
 		NumberStringConverter converter = new NumberStringConverter(new DecimalFormat());
 		Bindings.bindBidirectional(input.textProperty(), (Property<Number>)prop, converter);
 
