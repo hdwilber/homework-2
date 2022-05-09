@@ -73,6 +73,15 @@ public class Board {
 				shapes.remove(shape);
 			});
 		});
+
+		deleteButton.setOnAction(e -> {
+			List<Shape> selectedShapes = shapeListView.getSelectionModel().getSelectedItems();
+			selectedShapes.forEach(shape -> {
+				shapes.remove(shape);
+			});
+			shapeListView.getSelectionModel().clearSelection();
+		});
+
         HBox buttonBox = new HBox(20, addButton, groupButton, deleteButton);
         buttonBox.setAlignment(Pos.TOP_CENTER);
 
