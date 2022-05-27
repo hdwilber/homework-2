@@ -12,7 +12,8 @@ public class Square extends Shape {
 	DoubleProperty width;
 
 	public static List<ShapeDetailsProperty<?>> detailsProperties;
-	public static AddNewOption addNewOption = new AddNewOption("/square-solid.png", "Square", ShapeType.SQUARE);
+	public static String icon = "/square-solid.png";
+	public static AddNewOption addNewOption = new AddNewOption(icon, "Square", ShapeType.SQUARE);
 	static {
 		detailsProperties = new ArrayList<ShapeDetailsProperty<?>>();
 		detailsProperties.addAll(Shape.detailsProperties);
@@ -51,6 +52,11 @@ public class Square extends Shape {
 	@Override
 	public Pane getDetailsForm() {
 		return getDetailsForm(detailsProperties);
+	}
+	
+	@Override
+	public String getIcon() {
+		return icon;
 	}
 
 }

@@ -36,8 +36,9 @@ public class Image extends Shape {
 		});
 	}
 
+	public static String icon = "/image-solid.png";
 	public static List<ShapeDetailsProperty<?>> detailsProperties;
-	public static AddNewOption addNewOption = new AddNewOption("/image-solid.png", "Image", ShapeType.IMAGE);
+	public static AddNewOption addNewOption = new AddNewOption(icon, "Image", ShapeType.IMAGE);
 	static {
 		detailsProperties = new ArrayList<ShapeDetailsProperty<?>>();
 		detailsProperties.addAll(Shape.detailsProperties);
@@ -62,5 +63,10 @@ public class Image extends Shape {
 		view.fitHeightProperty().bind(height);
 		view.visibleProperty().bind(visible);
 		return view;
+	}
+	
+	@Override
+	public String getIcon() {
+		return icon;
 	}
 }

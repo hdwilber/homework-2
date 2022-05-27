@@ -6,19 +6,30 @@ import java.util.Optional;
 
 import javafx.beans.property.ListProperty;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ListView.EditEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
-public class Board {
+public class Board extends VBox {
 	ListProperty<Shape> shapes;
 	ShapeListView shapeListView;
+	ShapeDetailsForm shapeDetailsForm;
+	Pane formContainer;
 
 	public Board(ListProperty<Shape> s) {
+		super(16);
+		setPadding(new Insets(16, 16, 16, 16));
 		shapes = s;
-		shapeListView = new ShapeListView(s);
+		formContainer = new Pane();
+		shapeListView = new ShapeListView(s, formContainer);
+
+		prepare();
 	}
 
 	public Shape getNewShapePerType(Shape.ShapeType type) {
@@ -33,8 +44,7 @@ public class Board {
 		return null;
 	}
 
-	public Pane getPane() {
-        VBox pane = new VBox(16);
+	public void prepare() {
         Button addButton = new Button("Add");
         addButton.setOnAction(e -> {
         	AddNewDialog modal = new AddNewDialog();
@@ -42,7 +52,7 @@ public class Board {
 			if (result.isPresent() && result.get() != Shape.ShapeType.NONE) {
 				result.ifPresent(shapeType -> {
 					Shape emptyShape = getNewShapePerType(shapeType);
-					ShapeDetails newModal = new ShapeDetails(emptyShape);
+					ShapeDetailsDialog newModal = new ShapeDetailsDialog(emptyShape);
 					Optional<Shape> newResult = newModal.showAndWait();
 					if (newResult.isPresent()) {
 						newResult.ifPresent(newShape -> {
@@ -78,6 +88,43 @@ public class Board {
 				ungroupButton.setDisable(true);
 			}
 		});
+		
+//		shapeListView.setOnEditStart(new EventHandler<ListView.EditEvent<Shape>>() {
+//			@Override
+//			public void handle(EditEvent<Shape> event) {
+//				int index = event.getIndex();
+//				if (index > -1) {
+//					if (shapeDetailsForm != null) {
+//						getChildren().remove(shapeDetailsForm);
+//						shapeDetailsForm = null;
+//					}
+//					Shape shape = shapes.get(index);
+//					if (shape != null) {
+//						shapeDetailsForm = new ShapeDetailsForm(shape);
+//						getChildren().add(shapeDetailsForm);
+//					}
+//				}
+//			}
+//		});
+
+		shapeListView.setOnEditCommit(new EventHandler<ListView.EditEvent<Shape>>() {
+			@Override
+			public void handle(EditEvent<Shape> event) {
+				System.out.println("THE NEW VALUE");
+				System.out.println(event.getNewValue().toString());
+			}
+		});
+//		shapeListView.setOnEditCancel(new EventHandler<ListView.EditEvent<Shape>>() {
+//			@Override
+//			public void handle(EditEvent<Shape> event) {
+//				int index = event.getIndex();
+//				if (index > -1 && shapeDetailsForm != null) {
+//					getChildren().remove(shapeDetailsForm);
+//					shapeDetailsForm = null;
+//				}
+//			}
+//			
+//		});
 
 		groupButton.setOnAction(e -> {
 			List<Shape> selectedShapes = new ArrayList<Shape>(shapeListView.getSelectionModel().getSelectedItems());
@@ -108,9 +155,8 @@ public class Board {
 
         HBox buttonBox = new HBox(20, addButton, groupButton, ungroupButton, deleteButton);
         buttonBox.setAlignment(Pos.TOP_CENTER);
-
-        pane.getChildren().add(shapeListView);
-        pane.getChildren().add(buttonBox);
-        return pane;
+        getChildren().add(shapeListView);
+        getChildren().add(buttonBox);
+        getChildren().add(formContainer);
 	}
 }

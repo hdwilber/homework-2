@@ -24,8 +24,9 @@ public class Circle extends Shape {
 		radius = new SimpleDoubleProperty(r);
 	}
 
+	private static String icon = "/circle-solid.png";
 	public static List<ShapeDetailsProperty<?>> detailsProperties = new ArrayList<ShapeDetailsProperty<?>>();
-	public static AddNewOption addNewOption = new AddNewOption("/circle-solid.png", "Circle", ShapeType.CIRCLE);
+	public static AddNewOption addNewOption = new AddNewOption(icon, "Circle", ShapeType.CIRCLE);
 	static {
 		detailsProperties.addAll(Shape.detailsProperties);
 		detailsProperties.add(new ShapeDetailsProperty<Circle>("Radius", InputType.NUMBER, "radius", Circle.class));
@@ -48,5 +49,10 @@ public class Circle extends Shape {
 	@Override
 	public Pane getDetailsForm() {
 		return getDetailsForm(detailsProperties);
+	}
+	
+	@Override
+	public String getIcon() {
+		return icon;
 	}
 }

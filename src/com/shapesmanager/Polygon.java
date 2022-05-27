@@ -11,14 +11,15 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 
 public class Polygon extends Shape {
-	ListProperty<Double> sides;
+	ListProperty<Double> points;
 
 	public static List<ShapeDetailsProperty<?>> detailsProperties;
-	public static AddNewOption addNewOption = new AddNewOption("/draw-polygon-solid.png", "Polygon", ShapeType.POLYGON);
+	public static String icon = "/draw-polygon-solid.png";
+	public static AddNewOption addNewOption = new AddNewOption(icon, "Polygon", ShapeType.POLYGON);
 	static {
 		detailsProperties = new ArrayList<ShapeDetailsProperty<?>>();
 		detailsProperties.addAll(Shape.detailsProperties);
-		detailsProperties.add(new ShapeDetailsProperty<Polygon>("Side", InputType.LIST_NUMBER, "sides", Polygon.class));
+		detailsProperties.add(new ShapeDetailsProperty<Polygon>("Side", InputType.LIST_NUMBER, "points", Polygon.class));
 	}
 	
 	public Polygon() {
@@ -27,17 +28,17 @@ public class Polygon extends Shape {
 	}
 	public Polygon(Double[] s) {
 		super("Polygon-" + s.length);
-		setupSides(s);
+		setupPoints(s);
 	}
 
 	public Polygon(Double[] s, double x, double y) {
 		super("Polygon-" + s.length, x, y);
-		setupSides(s);
+		setupPoints(s);
 	}
 	
-	public void setupSides(Double[] s) {
+	public void setupPoints(Double[] s) {
 	    ObservableList<Double> observableList = FXCollections.observableArrayList(s);
-		sides = new SimpleListProperty<Double>(observableList);
+		points = new SimpleListProperty<Double>(observableList);
 		
 	}
 	public String toString() {
@@ -47,7 +48,11 @@ public class Polygon extends Shape {
 	@Override
 	public Node getShape() {
 		javafx.scene.shape.Polygon polygon = new javafx.scene.shape.Polygon();
-		polygon.getPoints().addAll(sides.getValue());
+		polygon.getPoints().addAll(points);
+		points.addListener((arg, oldVal, newVal) -> {
+			polygon.getPoints().clear();
+			polygon.getPoints().addAll(newVal);
+		});
 		polygon.translateXProperty().bind(x);
 		polygon.translateYProperty().bind(y);
 		polygon.visibleProperty().bind(visible);
@@ -59,4 +64,8 @@ public class Polygon extends Shape {
 		return getDetailsForm(detailsProperties);
 	}
 
+	@Override
+	public String getIcon() {
+		return icon;
+	}
 }

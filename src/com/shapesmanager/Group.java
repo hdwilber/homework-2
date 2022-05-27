@@ -51,5 +51,10 @@ public class Group extends Shape {
 		});
 		return content;
 	}
+	
+	@Override
+	public String getIcon() {
+		return null;
+	}
 
 }

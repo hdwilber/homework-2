@@ -3,6 +3,7 @@ package com.shapesmanager;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
@@ -22,8 +23,9 @@ class ImageButton extends Button {
 		image = new SimpleObjectProperty<javafx.scene.image.Image>(new javafx.scene.image.Image(i));
 		ImageView view = new ImageView();
 		view.imageProperty().bind(image);
-		view.setFitWidth(64);
-		view.setFitHeight(48);
+		view.setFitWidth(32);
+		view.setFitHeight(32);
+		setPadding(new Insets(16, 16, 16, 16));
 		this.setContentDisplay(ContentDisplay.TOP);
 		this.setText(l);
 		setGraphic(view);
@@ -51,7 +53,7 @@ public class AddNewDialog extends Dialog<Shape.ShapeType> {
 		ButtonType cancelButtonType = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
 		getDialogPane().getButtonTypes().add(cancelButtonType);
 		setResizable(true);
-		
+		setTitle("New Shape to Add");
 		addOptions();
 		
 	}
@@ -76,7 +78,7 @@ public class AddNewDialog extends Dialog<Shape.ShapeType> {
 			});
 		}
 		setResultConverter(btn -> btn.getButtonData() == ButtonData.CANCEL_CLOSE ? Shape.ShapeType.NONE : null);
-		getDialogPane().setHeaderText("Select the new shape to add");
+		getDialogPane().setHeaderText("Select the new shape to add:");
 		getDialogPane().setContent(pane);
 	}
 

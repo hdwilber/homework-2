@@ -8,6 +8,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ListProperty;
@@ -56,25 +57,37 @@ class ShapeDetailsProperty<T> {
 		if (prop instanceof ListProperty) {
 			List<Double> values = ((ListProperty)prop).getValue();
 			Iterator<Double> it = values.iterator();
-			int index = 1;
+
+			AtomicInteger ordinal = new AtomicInteger(0);
 			while(it.hasNext()) {
-				Label labelX = new Label(this.label + " X" + index);
+				System.out.println("The index: " + ordinal.get());
+				Label labelX = new Label(this.label + " X" + ordinal.get());
 				TextField inputX = new TextField();
 				Double valueX = it.next();
-
-				Label labelY = new Label(this.label + " Y" + index);
+				inputX.setTextFormatter(new TextFormatter<>(new DoubleStringConverter()));
+				inputX.textProperty().set(valueX.toString());
+				inputX.setUserData(ordinal.get());
+				inputX.textProperty().addListener((arg, oldVal, newVal) -> {
+					System.out.println("Ordinal: " + ordinal.get());
+					((ListProperty) prop).set((int)inputX.getUserData(), Double.parseDouble(newVal));
+				});
+				ordinal.incrementAndGet();
+				Label labelY = new Label(this.label + " Y" + ordinal.get());
 				TextField inputY = new TextField();
 				Double valueY = it.next();
-
-				inputX.setTextFormatter(new TextFormatter<>(new DoubleStringConverter()));
 				inputY.setTextFormatter(new TextFormatter<>(new DoubleStringConverter()));
-				inputX.textProperty().set(valueX.toString());
 				inputY.textProperty().set(valueY.toString());
+				inputY.setUserData(ordinal.get());
+				inputY.textProperty().addListener((arg, oldVal, newVal) -> {
+					System.out.println("Ordinal: " + ordinal.get());
+					((ListProperty) prop).set((int)inputY.getUserData(), Double.parseDouble(newVal));
+				});
+				ordinal.incrementAndGet();
+
 				result.add(labelX);
 				result.add(inputX);
 				result.add(labelY);
 				result.add(inputY);
-				index++;
 			}
 		}
 		return result;
@@ -85,7 +98,7 @@ class ShapeDetailsProperty<T> {
 		List<Node> result = new ArrayList<Node>();
 		result.add(label);
 		result.add(button);
-
+		
 		button.setOnAction(e -> {
 			FileChooser fileChooser = new FileChooser();
 			fileChooser.setTitle("Open Resource File");
@@ -159,14 +172,14 @@ class ShapeDetailsProperty<T> {
 	}
 }
 
-public class ShapeDetails extends Dialog<Shape>{
+public class ShapeDetailsDialog extends Dialog<Shape>{
 	Shape shape;
 
-	public ShapeDetails() {
+	public ShapeDetailsDialog() {
 		super();
 		createForm();
 	}
-	public ShapeDetails(Shape s) {
+	public ShapeDetailsDialog(Shape s) {
 		super();
 		shape = s;
 		createForm();

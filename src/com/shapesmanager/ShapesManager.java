@@ -27,9 +27,9 @@ public class ShapesManager extends Application {
 	}
 	public Parent setup() {
 		board = new Board(shapes);
-        canvas = new Canvas(shapes, 200, 200);
+        canvas = new Canvas(shapes, 3000, 3000);
         BorderPane root = new BorderPane();
-        root.setRight(board.getPane());
+        root.setLeft(board);
         root.setCenter(canvas);
         return root;
 	}

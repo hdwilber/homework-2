@@ -118,4 +118,6 @@ public abstract class Shape {
 	public String toString() {
 		return this.id.get();
 	}
+
+	public abstract String getIcon();
 }
