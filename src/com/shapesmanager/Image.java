@@ -57,10 +57,12 @@ public class Image extends Shape {
 	public Node getShape() {
 		javafx.scene.image.ImageView view = new javafx.scene.image.ImageView();
 		url.addListener((arg, oldVal, newVal) -> {
-			System.out.println("THE NEW URL " + newVal);
+			System.out.println("URL:" + newVal);
 			if (newVal != null) {
 				javafx.scene.image.Image image = new javafx.scene.image.Image(newVal);
 				view.setImage(image);
+				width.setValue(image.getWidth());
+				height.setValue(image.getHeight());
 			}
 		});
 		image.addListener((arg, old, newVal) -> {

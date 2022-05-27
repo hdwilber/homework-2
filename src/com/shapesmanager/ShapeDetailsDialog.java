@@ -67,7 +67,6 @@ class ShapeDetailsProperty<T> {
 			@Override
 			public void handle(KeyEvent ke) {
 				if (ke.getCode().equals(KeyCode.ENTER)) {
-					System.out.println("THIS IS THE TEXT " + input.getText());
 					try {
 						new URL(input.getText()).toURI();
 						prop.setValue(input.getText());
