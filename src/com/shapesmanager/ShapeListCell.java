@@ -34,7 +34,7 @@ public class ShapeListCell extends ListCell<Shape> {
 			editIcon.setFitHeight(16);
 			row.getChildren().add(editIcon);
 		}
-		ButtonBar buttonBar = new ButtonBar(ButtonBar.BUTTON_ORDER_LINUX);
+		ButtonBar buttonBar = new ButtonBar();
 		Button saveButton = new Button("Save");
 		Button cancelButton = new Button("Cancel");
 		cancelButton.setOnAction(arg -> cancelEdit());

@@ -94,7 +94,6 @@ public class Board extends ScrollPane {
 		shapeListView.setOnEditCommit(new EventHandler<ListView.EditEvent<Shape>>() {
 			@Override
 			public void handle(EditEvent<Shape> event) {
-				System.out.println("THE NEW VALUE");
 				System.out.println(event.getNewValue().toString());
 			}
 		});
@@ -129,9 +128,7 @@ public class Board extends ScrollPane {
         HBox buttonBox = new HBox(20, addButton, groupButton, ungroupButton, deleteButton);
         buttonBox.setAlignment(Pos.TOP_CENTER);
 
-        container.getChildren().add(shapeListView);
-        container.getChildren().add(buttonBox);
-        container.getChildren().add(formContainer);
+        container.getChildren().addAll(shapeListView, buttonBox, formContainer);
         setContent(container);
 	}
 }
