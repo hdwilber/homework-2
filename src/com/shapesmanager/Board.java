@@ -12,23 +12,25 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ListView.EditEvent;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
-public class Board extends VBox {
+public class Board extends ScrollPane {
 	ListProperty<Shape> shapes;
 	ShapeListView shapeListView;
 	ShapeDetailsForm shapeDetailsForm;
+	VBox container;
 	Pane formContainer;
 
 	public Board(ListProperty<Shape> s) {
-		super(16);
+		super();
 		setPadding(new Insets(16, 16, 16, 16));
 		shapes = s;
 		formContainer = new Pane();
 		shapeListView = new ShapeListView(s, formContainer);
-
+		container = new VBox(16);
 		prepare();
 	}
 
@@ -89,24 +91,6 @@ public class Board extends VBox {
 			}
 		});
 		
-//		shapeListView.setOnEditStart(new EventHandler<ListView.EditEvent<Shape>>() {
-//			@Override
-//			public void handle(EditEvent<Shape> event) {
-//				int index = event.getIndex();
-//				if (index > -1) {
-//					if (shapeDetailsForm != null) {
-//						getChildren().remove(shapeDetailsForm);
-//						shapeDetailsForm = null;
-//					}
-//					Shape shape = shapes.get(index);
-//					if (shape != null) {
-//						shapeDetailsForm = new ShapeDetailsForm(shape);
-//						getChildren().add(shapeDetailsForm);
-//					}
-//				}
-//			}
-//		});
-
 		shapeListView.setOnEditCommit(new EventHandler<ListView.EditEvent<Shape>>() {
 			@Override
 			public void handle(EditEvent<Shape> event) {
@@ -114,17 +98,6 @@ public class Board extends VBox {
 				System.out.println(event.getNewValue().toString());
 			}
 		});
-//		shapeListView.setOnEditCancel(new EventHandler<ListView.EditEvent<Shape>>() {
-//			@Override
-//			public void handle(EditEvent<Shape> event) {
-//				int index = event.getIndex();
-//				if (index > -1 && shapeDetailsForm != null) {
-//					getChildren().remove(shapeDetailsForm);
-//					shapeDetailsForm = null;
-//				}
-//			}
-//			
-//		});
 
 		groupButton.setOnAction(e -> {
 			List<Shape> selectedShapes = new ArrayList<Shape>(shapeListView.getSelectionModel().getSelectedItems());
@@ -155,8 +128,10 @@ public class Board extends VBox {
 
         HBox buttonBox = new HBox(20, addButton, groupButton, ungroupButton, deleteButton);
         buttonBox.setAlignment(Pos.TOP_CENTER);
-        getChildren().add(shapeListView);
-        getChildren().add(buttonBox);
-        getChildren().add(formContainer);
+
+        container.getChildren().add(shapeListView);
+        container.getChildren().add(buttonBox);
+        container.getChildren().add(formContainer);
+        setContent(container);
 	}
 }

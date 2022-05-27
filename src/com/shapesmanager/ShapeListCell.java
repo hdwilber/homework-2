@@ -1,9 +1,6 @@
 package com.shapesmanager;
 
-import java.util.Optional;
-
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -42,9 +39,7 @@ public class ShapeListCell extends ListCell<Shape> {
 		Button cancelButton = new Button("Cancel");
 		cancelButton.setOnAction(arg -> cancelEdit());
 		saveButton.setOnAction(arg -> {
-			Shape item = getItem();
-			item.id.set(item.id.get()+ "-Edited");
-			commitEdit(item);
+			commitEdit(getItem());
 			cancelEdit();
 		});
 		ButtonBar.setButtonData(saveButton, ButtonData.OK_DONE);

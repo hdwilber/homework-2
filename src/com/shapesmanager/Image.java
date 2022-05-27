@@ -42,7 +42,7 @@ public class Image extends Shape {
 	static {
 		detailsProperties = new ArrayList<ShapeDetailsProperty<?>>();
 		detailsProperties.addAll(Shape.detailsProperties);
-		detailsProperties.add(new ShapeDetailsProperty<Image>("Url", InputType.TEXT, "url", Image.class));
+		detailsProperties.add(new ShapeDetailsProperty<Image>("Url", InputType.URL, "url", Image.class));
 		detailsProperties.add(new ShapeDetailsProperty<Image>("Source", InputType.IMAGE, "image", Image.class));
 		detailsProperties.add(new ShapeDetailsProperty<Image>("Width", InputType.NUMBER, "width", Image.class));
 		detailsProperties.add(new ShapeDetailsProperty<Image>("Height", InputType.NUMBER, "height", Image.class));
@@ -56,7 +56,18 @@ public class Image extends Shape {
 	@Override
 	public Node getShape() {
 		javafx.scene.image.ImageView view = new javafx.scene.image.ImageView();
-		view.imageProperty().bind(image);
+		url.addListener((arg, oldVal, newVal) -> {
+			System.out.println("THE NEW URL " + newVal);
+			if (newVal != null) {
+				javafx.scene.image.Image image = new javafx.scene.image.Image(newVal);
+				view.setImage(image);
+			}
+		});
+		image.addListener((arg, old, newVal) -> {
+			if (newVal != null) {
+				view.setImage(newVal);
+			}
+		});
 		view.xProperty().bind(x);
 		view.yProperty().bind(y);
 		view.fitWidthProperty().bind(width);

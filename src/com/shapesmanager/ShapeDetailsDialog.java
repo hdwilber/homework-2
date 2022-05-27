@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,6 +18,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.StringProperty;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
@@ -22,6 +27,8 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
@@ -31,6 +38,7 @@ import javafx.util.converter.NumberStringConverter;
 
 enum InputType {
        TEXT,
+       URL,
        NUMBER,
        LIST_NUMBER,
        LIST_SHAPE,
@@ -52,6 +60,29 @@ class ShapeDetailsProperty<T> {
 		className = c;
 	}
 
+	public List<Node> getLabelInputURL(Property prop) {
+		List<Node> result = new ArrayList<Node>();
+		TextField input = new TextField();
+		input.setOnKeyPressed(new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent ke) {
+				if (ke.getCode().equals(KeyCode.ENTER)) {
+					System.out.println("THIS IS THE TEXT " + input.getText());
+					try {
+						new URL(input.getText()).toURI();
+						prop.setValue(input.getText());
+					} catch (MalformedURLException | URISyntaxException e) {
+						System.out.println("Done");
+					}
+
+				}
+			}
+		});
+		Label label = getLabel();
+		result.add(label);
+		result.add(input);
+		return result;
+	}
 	public List<Node> getLabelInputListNumber(Property prop) {
 		List<Node> result = new ArrayList<Node>();
 		if (prop instanceof ListProperty) {
@@ -68,7 +99,6 @@ class ShapeDetailsProperty<T> {
 				inputX.textProperty().set(valueX.toString());
 				inputX.setUserData(ordinal.get());
 				inputX.textProperty().addListener((arg, oldVal, newVal) -> {
-					System.out.println("Ordinal: " + ordinal.get());
 					((ListProperty) prop).set((int)inputX.getUserData(), Double.parseDouble(newVal));
 				});
 				ordinal.incrementAndGet();
@@ -79,7 +109,6 @@ class ShapeDetailsProperty<T> {
 				inputY.textProperty().set(valueY.toString());
 				inputY.setUserData(ordinal.get());
 				inputY.textProperty().addListener((arg, oldVal, newVal) -> {
-					System.out.println("Ordinal: " + ordinal.get());
 					((ListProperty) prop).set((int)inputY.getUserData(), Double.parseDouble(newVal));
 				});
 				ordinal.incrementAndGet();
@@ -156,6 +185,8 @@ class ShapeDetailsProperty<T> {
 			Property prop = (Property)field.get(shape);
 			if (type == InputType.TEXT) {
 				return getLabelInputTextFor(prop);
+			} else if (type == InputType.URL) {
+				return getLabelInputURL(prop);
 			} else if (type == InputType.NUMBER) {
 				return getLabelInputNumberFor(prop);
 			} else if (type == InputType.LIST_NUMBER) {
