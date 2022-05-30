@@ -48,6 +48,7 @@ public class ShapeListCell extends ListCell<Shape> {
 
 		form = new ShapeDetailsForm(getItem());
 		VBox root = new VBox(16);
+		root.getChildren().add(new Label(getItem().getName() + " Properties"));
 		root.getChildren().add(form);
 		root.getChildren().add(buttonBar);
 		((ShapeListView)getListView()).form.getChildren().add(root);

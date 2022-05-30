@@ -59,4 +59,8 @@ public class Square extends Shape {
 		return icon;
 	}
 
+	@Override
+	public String getName() {
+		return "Square";
+	}
 }

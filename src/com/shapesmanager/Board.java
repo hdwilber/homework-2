@@ -10,6 +10,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ListView.EditEvent;
 import javafx.scene.control.ScrollPane;
@@ -128,7 +129,7 @@ public class Board extends ScrollPane {
         HBox buttonBox = new HBox(20, addButton, groupButton, ungroupButton, deleteButton);
         buttonBox.setAlignment(Pos.TOP_CENTER);
 
-        container.getChildren().addAll(shapeListView, buttonBox, formContainer);
+        container.getChildren().addAll(new Label("List of shapes"), shapeListView, buttonBox, formContainer);
         setContent(container);
 	}
 }

@@ -57,4 +57,9 @@ public class Group extends Shape {
 		return null;
 	}
 
+	@Override
+	public String getName() {
+		return "Group";
+	}
+		
 }

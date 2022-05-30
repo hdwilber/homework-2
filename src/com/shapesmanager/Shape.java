@@ -120,4 +120,5 @@ public abstract class Shape {
 	}
 
 	public abstract String getIcon();
+	public abstract String getName();
 }

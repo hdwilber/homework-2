@@ -68,4 +68,9 @@ public class Polygon extends Shape {
 	public String getIcon() {
 		return icon;
 	}
+
+	@Override
+	public String getName() {
+		return "Polygon";
+	}
 }

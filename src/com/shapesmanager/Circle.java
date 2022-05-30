@@ -55,4 +55,9 @@ public class Circle extends Shape {
 	public String getIcon() {
 		return icon;
 	}
+	
+	@Override
+	public String getName() {
+		return "Circle";
+	}
 }
